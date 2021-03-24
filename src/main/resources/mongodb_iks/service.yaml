@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: reskillmongodb-service
+spec:
+# Uncomment type: NodePort & nodePort: <port> to expose mongo to internet.
+  type: NodePort
+  ports:
+  - name: "27017"
+    nodePort: 30017
+    port: 27017
+    targetPort: 27017
+  selector:
+    app: reskillmongodb

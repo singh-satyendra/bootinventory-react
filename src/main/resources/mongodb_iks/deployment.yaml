@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reskillmongodb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: reskillmongodb
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: reskillmongodb
+    spec:
+      containers:
+      - image: us.icr.io/ssingh/reskillmongodb:1.0
+        name: reskillmongodb
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 27017
+      restartPolicy: Always
+      

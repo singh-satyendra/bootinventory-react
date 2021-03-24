@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookinventorydeployment
+spec:
+  selector:
+    matchLabels:
+      app: bookinventory
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: bookinventory
+    spec:
+      containers:
+      - image: us.icr.io/ssingh/bookinventory:1.0
+        name: bookinventory
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9002
+        volumeMounts:
+        - name: bookinventoryvolume
+          mountPath: "/config"
+      restartPolicy: Always
+      volumes:
+      - name: bookinventoryvolume
+        configMap:
+          name: bookinventorycm
+          items:
+          - key: application.properties 
+            path: application.properties
