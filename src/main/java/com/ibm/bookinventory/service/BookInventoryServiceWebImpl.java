@@ -26,8 +26,8 @@ public class BookInventoryServiceWebImpl implements BookInventoryServiceWeb {
 	}
 
 	@Override
-	public Mono<BookData> updateBookWeb(BookData book, String isbn) {
-		return bookInventoryReopWeb.findByIsbn(isbn).flatMap(bookData -> {
+	public Mono<BookData> updateBookWeb(BookData book) {
+		return bookInventoryReopWeb.findByIsbn(book.getIsbn()).flatMap(bookData -> {
 			bookData.setBookType(book.getBookType());
 			bookData.setAuthor(book.getAuthor());
 			bookData.setTitle(book.getTitle());

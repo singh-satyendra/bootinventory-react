@@ -12,7 +12,7 @@ public interface BookInventoryServiceWeb {
 	
 	Mono<BookData> createBookWeb(BookData book);
 	
-	Mono<BookData> updateBookWeb(BookData book , String isbn);
+	Mono<BookData> updateBookWeb(BookData book);
 	
 	Mono<Void> deleteBookWeb(String isbn);
 	

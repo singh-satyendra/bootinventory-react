@@ -1,5 +1,6 @@
 package com.ibm.bookinventory.repo;
 
+import org.reactivestreams.Publisher;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.http.ResponseEntity;
 
@@ -11,4 +12,6 @@ public interface BookInventoryRepoWeb extends ReactiveMongoRepository<BookData, 
 	Mono<BookData> findByIsbn(String isbn);
 	
 	Mono<Void> deleteByIsbn(String isbn);
+
+	Mono<Void> save(Mono<BookData> book);
 }

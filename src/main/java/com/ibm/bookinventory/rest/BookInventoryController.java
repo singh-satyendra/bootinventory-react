@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ibm.bookinventory.service.BookInventoryService;
 import com.ibm.bookinventory.service.BookInventoryServiceWeb;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -139,37 +141,36 @@ public class BookInventoryController {
 	//get all books
 	
 	@RequestMapping(value = "/wcbooks", method = RequestMethod.GET)
-	public ResponseEntity<Flux<BookData>> getAll() {
-    	Flux<BookData> books = this.bookInventoryServiceWeb.getAllBooksWeb();
-    	HttpStatus status = books != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-        return new ResponseEntity<Flux<BookData>>(books, status);
+	public Flux<BookData> getAll() {
+    	return this.bookInventoryServiceWeb.getAllBooksWeb();
 	}
 	
 	//get book by Isbn
 	@RequestMapping(value = "/wcbook/{isbn}")
 	public Mono<ResponseEntity<BookData>> getOneBook(@PathVariable(value = "isbn") String isbn) {
-		
 		  return this.bookInventoryServiceWeb.getBookByIsbn(isbn)
-				  .map((book) -> new ResponseEntity<>(book, HttpStatus.OK)) 
-				  .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-		  
+		                                     .map(bookdata -> ResponseEntity.ok(bookdata))
+		                                     .defaultIfEmpty(ResponseEntity.notFound().build());
 	}
+	
 	
 	//create book 
 	@RequestMapping(value = "/wcbook" , method = RequestMethod.POST)
-	public Mono<ResponseEntity<BookData>> createBookWeb(@Valid @RequestBody BookData bookWeb){
+	public Mono<ResponseEntity<BookData>> createBookWeb(@RequestBody BookData bookWeb){
 		return this.bookInventoryServiceWeb.createBookWeb(bookWeb)
-				.map((book) -> new ResponseEntity<>(book,HttpStatus.CREATED));
-				
-                
+				                           .map(bookdata -> ResponseEntity.ok(bookdata))
+		                                   .defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 	
 	//Update book
-	@RequestMapping(value ="/wcbook/{isbn}" , method = RequestMethod.PUT)
-	public Mono<ResponseEntity<BookData>> updateBookWeb(@RequestBody BookData book , @PathVariable (value = "isbn") String isbn){
-		return this.bookInventoryServiceWeb.updateBookWeb(book, isbn)
-				.map( (bookData) -> new ResponseEntity<>(book,HttpStatus.OK))
-				.defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	@RequestMapping(value ="/wcbook" , method = RequestMethod.PUT)
+	public Mono<ResponseEntity<BookData>> updateBookWeb(@RequestBody BookData book){
+		
+		logger.info("*********** Entered updateBookWeb ************ ", book.getIsbn());
+		
+		return this.bookInventoryServiceWeb.updateBookWeb(book)
+				                           .map(bookdata -> ResponseEntity.ok(bookdata))
+		                                   .defaultIfEmpty(ResponseEntity.notFound().build());
 			
 	}
 	
@@ -178,7 +179,7 @@ public class BookInventoryController {
 	@RequestMapping(value ="/wcbook/{isbn}" , method = RequestMethod.DELETE)
 	public Mono<ResponseEntity<Void>> deleteBookWeb(@PathVariable (value="isbn") String isbn){
 		return this.bookInventoryServiceWeb.deleteBookWeb(isbn)
-				.map((book) -> new ResponseEntity<>(book, HttpStatus.OK));
+				                           .map(bookdata -> ResponseEntity.ok(bookdata));
 	}
 	
 }
